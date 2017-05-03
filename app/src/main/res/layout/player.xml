@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingLeft="10dp"
+    android:paddingRight="10dp"
+    android:paddingBottom="10dp"
+    android:paddingTop="10dp"
+    android:weightSum="1">
+    <ImageButton
+        android:id="@+id/startbtn"
+        android:layout_width="81dp"
+        android:layout_height="87dp"
+        android:src="@drawable/start"
+        android:layout_centerHorizontal="true"/>
+
+    <ImageButton
+        android:id="@+id/stoptbtn"
+        android:layout_width="87dp"
+        android:layout_height="67dp"
+        android:src="@drawable/stop"
+        android:layout_weight="0.04"
+        android:layout_toLeftOf="@+id/startbtn"
+        android:layout_alignBottom="@+id/startbtn"
+        android:layout_alignParentTop="true" />
+
+    <ImageButton
+        android:id="@+id/pausebtn"
+        android:layout_width="81dp"
+        android:layout_height="81dp"
+        android:src="@drawable/pause"
+        android:layout_toRightOf="@+id/startbtn"
+        android:layout_alignBottom="@+id/startbtn"
+        android:layout_alignParentTop="true" />
+
+    <TextView
+        android:id="@+id/lyricText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/startbtn"/>
+
+</RelativeLayout>
