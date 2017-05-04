@@ -136,6 +136,30 @@ public class PlayerActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+
+//    @Override
+//    public boolean onOptionsItemSelected(MenuItem item){
+//        if (item.getItemId()==2){
+//            finish();
+//        }
+//        if (item.getItemId()==1){
+////            FileUtil fileUtil = new FileUtil();
+////            mp3FilesList = fileUtil.getDownloadedMp3Files("mp3Folder/");
+////            System.out.println("DDDDD "+mp3FilesList);
+////            mp3FilesList.remove(0);
+////            System.out.println("TTTTTT "+mp3FilesList);
+////            System.out.println("00000"+FileUtil.finalpath);
+//            File file = new File(Environment.getExternalStorageDirectory()+"/"+"mp3Folder"+"/first-mp3.mp3");
+//            file.delete();
+//            Intent intent = new Intent();
+//            intent.putExtra("isDeleted",true);
+//            Toast.makeText(this,"finish delete",Toast.LENGTH_SHORT).show();
+//            intent.setClass(this,MainActivity.class);
+//            startActivity(intent);
+//        }
+//        return super.onOptionsItemSelected(item);
+//    }
+
     //添加menu，不需要操作界面
     @Override
     public boolean onCreateOptionsMenu(Menu menu){
