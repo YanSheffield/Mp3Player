@@ -44,11 +44,13 @@ public class RemoteActivity extends ListActivity{
     private HttpDownloader httpDownloader = null;
     private List<Mp3Info> infos = new ArrayList<>();
     private static final int PERMISSION_REQUEST_CODE = 1;
+    private int temp = 1;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.remote);
         handler = new MyHandler();
+        httpDownloader = new HttpDownloader(handler,XMLHttp);
     }
 
     /**
@@ -163,11 +165,19 @@ public class RemoteActivity extends ListActivity{
         }
 
         public SimpleAdapter getSimpleAdapter(ArrayList<HashMap<String, String>> list,List<Mp3Info> infos) {
-            for(Mp3Info mp3Info:infos){
+            for(Mp3Info mp3Info:infos) {
                 map = new HashMap<>();
-                map.put("song_name",mp3Info.getMp3Name());
-                map.put("song_size",mp3Info.getMp3Size());
+                map.put("song_name", mp3Info.getMp3Name());
+                map.put("song_size", mp3Info.getMp3Size());
                 list.add(map);
+                if (temp != 1) {
+                    for (int i = 0; i < list.size()-1; i++) {
+                        if (map.equals(list.get(i))) {
+                            list.remove(i);
+                        }
+                    }
+                }
+                temp = temp+1;
             }
             this.list = list;
             return new SimpleAdapter(RemoteActivity.this,list, R.layout.mp3info, new String[]{"song_name","song_size"},

@@ -9,6 +9,7 @@
         android:layout_height="match_parent"
         android:padding="6dp"
         android:orientation="vertical">
+
         <TabWidget
             android:id="@android:id/tabs"
             android:layout_width="match_parent"

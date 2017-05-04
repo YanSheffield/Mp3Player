@@ -9,21 +9,29 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
+import android.support.v7.app.AppCompatActivity;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.geyan.lrc.LrcProcessor;
 import com.example.geyan.model.Mp3Info;
 import com.example.geyan.service.PlayerService;
 import com.example.geyan.util.AppConstant;
+import com.example.geyan.util.FileUtil;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.Queue;
 
@@ -31,7 +39,7 @@ import java.util.Queue;
  * Created by geyan on 30/04/2017.
  */
 
-public class PlayerActivity extends Activity {
+public class PlayerActivity extends AppCompatActivity {
 
     private ImageButton beginButton = null;
     private ImageButton endButton = null;
@@ -47,6 +55,8 @@ public class PlayerActivity extends Activity {
     private long pauseTime = 0;
     private long pausesartTime = 0;
     private long diff = 0;
+    private List<Mp3Info> mp3FilesList;
+    private boolean isDeleted = false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -101,6 +111,37 @@ public class PlayerActivity extends Activity {
                 startService(intentInner);
             }
         });
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item){
+        if (item.getItemId()==2){
+            finish();
+        }
+        if (item.getItemId()==1){
+//            FileUtil fileUtil = new FileUtil();
+//            mp3FilesList = fileUtil.getDownloadedMp3Files("mp3Folder/");
+//            System.out.println("DDDDD "+mp3FilesList);
+//            mp3FilesList.remove(0);
+//            System.out.println("TTTTTT "+mp3FilesList);
+//            System.out.println("00000"+FileUtil.finalpath);
+            File file = new File(Environment.getExternalStorageDirectory()+"/"+"mp3Folder"+"/first-mp3.mp3");
+            file.delete();
+            Intent intent = new Intent();
+            intent.putExtra("isDeleted",true);
+            Toast.makeText(this,"finish delete",Toast.LENGTH_SHORT).show();
+            intent.setClass(this,MainActivity.class);
+            startActivity(intent);
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    //添加menu，不需要操作界面
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu){
+        menu.add(0,1,1,R.string.mp3List_delete);
+        menu.add(0,2,2, R.string.mp3List_about);
+        return super.onCreateOptionsMenu(menu);
     }
 
     class UpdateTimeCallback implements Runnable{

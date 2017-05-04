@@ -20,6 +20,7 @@ import java.util.List;
 public class FileUtil {
     private String SDCARD;
     private String path;
+    public static String finalpath;
     //得到SD 卡的路径
     public FileUtil(){
         SDCARD = Environment.getExternalStorageDirectory()+"/";
@@ -28,6 +29,7 @@ public class FileUtil {
 
     //create file
     public File createFileInSDCard(String path, String fileName) throws IOException {
+        this.finalpath = SDCARD + path+"/"+fileName;
         File file = new File(SDCARD + path+"/"+fileName);
         file.createNewFile();
         return file;
