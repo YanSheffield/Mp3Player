@@ -3,6 +3,8 @@ package com.example.geyan.mp3player;
 import android.app.ListActivity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
@@ -27,11 +29,11 @@ public class LocalMp3ListActivity extends ListActivity {
     private HashMap<String,String> inidividualList;
     private List<Mp3Info> mp3FilesList;
     private int temp = 0;
+    private boolean isDeleted = false;
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         setContentView(R.layout.local);
-
     }
 
     @Override
@@ -44,23 +46,26 @@ public class LocalMp3ListActivity extends ListActivity {
     public void localMp3List(){
         FileUtil fileUtil = new FileUtil();
         mp3FilesList = fileUtil.getDownloadedMp3Files("mp3Folder/");
-        for (Mp3Info mp3Info:mp3FilesList){
-            inidividualList = new HashMap<>();
-            inidividualList.put("song_name",mp3Info.getMp3Name());
-            inidividualList.put("song_size",mp3Info.getMp3Size());
-            System.out.println("111111");
-            totalList.add(inidividualList);
-            System.out.println("totoal "+totalList);
-            if(temp!=0) {
-                for (int i=0;i<totalList.size();i++){
-                    if (inidividualList.equals(totalList.get(i))){
-                        totalList.remove(i);
+        Intent intent = getIntent();
+        isDeleted = intent.getBooleanExtra("isDeleted",false);
+        if (isDeleted == false) {
+            for (Mp3Info mp3Info : mp3FilesList) {
+                inidividualList = new HashMap<>();
+                inidividualList.put("song_name", mp3Info.getMp3Name());
+                inidividualList.put("song_size", mp3Info.getMp3Size());
+                System.out.println("111111");
+                totalList.add(inidividualList);
+                System.out.println("totoal " + totalList);
+                if (temp != 0) {
+                    for (int i = 0; i < totalList.size(); i++) {
+                        if (inidividualList.equals(totalList.get(i))) {
+                            totalList.remove(i);
+                        }
                     }
                 }
+                temp = temp + 1;
             }
-            temp = temp +1;
         }
-
         SimpleAdapter simpleAdapter = new SimpleAdapter(LocalMp3ListActivity.this,totalList,
                 R.layout.mp3info,new String[]{"song_name","song_size"},new int[]{R.id.mp3_Name,R.id.mp3_Size} );
         setListAdapter(simpleAdapter);
@@ -77,5 +82,23 @@ public class LocalMp3ListActivity extends ListActivity {
             intent.setClass(LocalMp3ListActivity.this,PlayerActivity.class);
             startActivity(intent);
         }
+    }
+
+    //memu做出的反应
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item){
+        if (item.getItemId()==2){
+            finish();
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    //添加menu，不需要操作界面
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu){
+        menu.add(0,1,1,"about");
+        menu.add(0,2,2,"exist");
+        return super.onCreateOptionsMenu(menu);
     }
 }

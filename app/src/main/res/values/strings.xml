@@ -1,7 +1,8 @@
 <resources>
     <string name="app_name">Mp3player</string>
-    <string name="mp3List.upadte">更新列表</string>
-    <string name="mp3List.about">关于</string>
+    <string name="mp3List.upadte">Update List</string>
+    <string name="mp3List.about">About</string>
+    <string name="mp3List.delete">Delete</string>
     <string name="downloadStatus.failure">下载失败</string>
     <string name="downloadStatus.success">下载成功</string>
     <string name="downloadStatus.depulicated">下载重复</string>

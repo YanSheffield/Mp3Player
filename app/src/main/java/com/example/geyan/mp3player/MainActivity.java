@@ -23,6 +23,7 @@ public class MainActivity extends TabActivity {
         super.onCreate(savedInstanceState);
         //设置布局文件
         setContentView(R.layout.main);
+        this.setTitle("char");
         //设置remote的标签页
         TabHost tabHost = getTabHost();
         //生成一个Intent对象，指向另一个activity
@@ -32,7 +33,7 @@ public class MainActivity extends TabActivity {
         TabHost.TabSpec remoteSpec = tabHost.newTabSpec("remote");
         //设置图标
         Resources resources = getResources();
-        remoteSpec.setIndicator("Remote1", resources.getDrawable(android.R.drawable.stat_sys_download));
+        remoteSpec.setIndicator("Remote", resources.getDrawable(android.R.drawable.stat_sys_download));
         //设置该页的内容
         remoteSpec.setContent(remoteIntent);
         //添加tab
@@ -43,7 +44,7 @@ public class MainActivity extends TabActivity {
         localIntent.setClass(this,LocalMp3ListActivity.class);//activity之间的跳转
         //创建一个新的页面，图标和字
         TabHost.TabSpec localSpec = tabHost.newTabSpec("local");
-        localSpec.setIndicator("Local1",resources.getDrawable(android.R.drawable.stat_sys_download));
+        localSpec.setIndicator("Local",resources.getDrawable(android.R.drawable.stat_sys_download));
         //设置该页的内容
         localSpec.setContent(localIntent);
         tabHost.addTab(localSpec);

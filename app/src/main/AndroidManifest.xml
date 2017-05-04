@@ -8,8 +8,9 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity">
+        android:theme="@style/AppTheme"
+        >
+        <activity android:name=".MainActivity" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -21,13 +22,13 @@
         <service android:name="com.example.geyan.service.PlayerService">
         </service>
 
-        <activity android:name=".RemoteActivity" android:label="@string/app_name">
+        <activity android:name=".RemoteActivity" >
         </activity>
 
-        <activity android:name=".PlayerActivity" android:label="Mp3player">
+        <activity android:name=".PlayerActivity">
         </activity>
 
-        <activity android:name=".LocalMp3ListActivity" android:label="@string/app_name">
+        <activity android:name=".LocalMp3ListActivity">
         </activity>
     </application>
     <uses-permission android:name="android.permission.INTERNET">
