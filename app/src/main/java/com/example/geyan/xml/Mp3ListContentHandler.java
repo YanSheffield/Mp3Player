@@ -83,11 +83,11 @@ public class Mp3ListContentHandler extends DefaultHandler {
             mp3Info.setIrcSize(temp);
         }
     }
-    public void setInfos(List<Mp3Info> infos) {
-        this.infos = infos;
-    }
-
-    public List<Mp3Info> getInfos() {
-        return infos;
-    }
+//    public void setInfos(List<Mp3Info> infos) {
+//        this.infos = infos;
+//    }
+//
+//    public List<Mp3Info> getInfos() {
+//        return infos;
+//    }
 }

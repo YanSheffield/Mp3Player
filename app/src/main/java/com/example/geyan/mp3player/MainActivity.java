@@ -1,52 +1,70 @@
 package com.example.geyan.mp3player;
 
-import android.app.TabActivity;
 import android.content.Intent;
-import android.content.res.Resources;
+import android.os.Environment;
+import android.support.design.widget.TabLayout;
+import android.support.v4.view.ViewPager;
+import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.os.PersistableBundle;
-import android.support.annotation.Nullable;
-import android.support.v4.content.res.ResourcesCompat;
-import android.widget.TabHost;
+import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.widget.Toast;
 
-/**
- * Created by geyan on 30/04/2017.
- */
+import com.example.geyan.util.PageAdapter;
 
-public class MainActivity extends TabActivity {
+import java.io.File;
 
-    /**
-     *一个大的activity包含了两个activity
-     */
+
+public class MainActivity extends AppCompatActivity {
+
+    PageAdapter adapter = null;
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //设置布局文件
         setContentView(R.layout.main);
-        this.setTitle("char");
-        //设置remote的标签页
-        TabHost tabHost = getTabHost();
-        //生成一个Intent对象，指向另一个activity
-        Intent remoteIntent = new Intent();
-        remoteIntent.setClass(this,RemoteActivity.class);
-        //生成一个tabspec对象，这个对象代表一页
-        TabHost.TabSpec remoteSpec = tabHost.newTabSpec("remote");
-        //设置图标
-        Resources resources = getResources();
-        remoteSpec.setIndicator("Remote", resources.getDrawable(android.R.drawable.stat_sys_download));
-        //设置该页的内容
-        remoteSpec.setContent(remoteIntent);
-        //添加tab
-        tabHost.addTab(remoteSpec);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        TabLayout tabLayout = (TabLayout) findViewById(R.id.tab_layout);
+        tabLayout.addTab(tabLayout.newTab().setText("Tab 1-"));
+        tabLayout.addTab(tabLayout.newTab().setText("Tab 2"));
+        tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
 
-        //另一个页面的intent对象
-        Intent localIntent = new Intent();
-        localIntent.setClass(this,LocalMp3ListActivity.class);//activity之间的跳转
-        //创建一个新的页面，图标和字
-        TabHost.TabSpec localSpec = tabHost.newTabSpec("local");
-        localSpec.setIndicator("Local",resources.getDrawable(android.R.drawable.stat_sys_download));
-        //设置该页的内容
-        localSpec.setContent(localIntent);
-        tabHost.addTab(localSpec);
+        final ViewPager viewPager = (ViewPager) findViewById(R.id.pager);
+        adapter = new PageAdapter(getSupportFragmentManager(), tabLayout.getTabCount());
+        viewPager.setAdapter(adapter);
+        viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
+        tabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                viewPager.setCurrentItem(tab.getPosition());
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+        });
+    }
+    public boolean onCreateOptionsMenu(Menu menu){
+        menu.add(0,1,1,R.string.sign_in);
+        menu.add(0,2,2, R.string.sign_up);
+        menu.add(0,3,3,R.string.sign_out);
+        return super.onCreateOptionsMenu(menu);
+    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item){
+        if (item.getItemId()==2){
+            finish();
+        }
+        if (item.getItemId()==1){
+
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

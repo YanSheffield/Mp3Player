@@ -63,7 +63,6 @@ public class PlayerActivity extends AppCompatActivity {
         setContentView(R.layout.player);
         Intent intent = getIntent();
         singleInfo = (Mp3Info) intent.getSerializableExtra("mp3Info");
-        System.out.println("SIngle"+singleInfo);
         beginButton = (ImageButton) findViewById(R.id.startbtn);
         endButton = (ImageButton) findViewById(R.id.stoptbtn);
         pauseButton = (ImageButton) findViewById(R.id.pausebtn);
@@ -158,6 +157,8 @@ public class PlayerActivity extends AppCompatActivity {
 //        }
 //        return super.onOptionsItemSelected(item);
 //    }
+
+
     //添加menu，不需要操作界面
     @Override
     public boolean onCreateOptionsMenu(Menu menu){
@@ -250,4 +251,7 @@ public class PlayerActivity extends AppCompatActivity {
             lyricTextview.setText((String)msg.obj);
         }
     }
+
 }
+
+

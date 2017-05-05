@@ -6,4 +6,7 @@
     <string name="downloadStatus.failure">下载失败</string>
     <string name="downloadStatus.success">下载成功</string>
     <string name="downloadStatus.depulicated">下载重复</string>
+    <string name="sign_in">sign in</string>
+    <string name="sign_up">sign up</string>
+    <string name="sign_out">sign out</string>
 </resources>
