@@ -44,6 +44,17 @@ public class PlayerService extends Service{
         return super.onStartCommand(intent,flags,startId);
     }
 
+    public void startPlay() {
+        if(!isplaying){
+            mediaPlayer = MediaPlayer.create(PlayerService.this, Uri.parse("file://"+getMp3Path()));
+            mediaPlayer.setLooping(false);
+            mediaPlayer.start();
+            isplaying = true;
+            isRelease = false;
+            isPause = false;
+        }
+    }
+
     public void stopPlay() {
         if (mediaPlayer!=null){
             if (isplaying){
@@ -75,21 +86,11 @@ public class PlayerService extends Service{
         }
     }
 
-    public void startPlay() {
-        if(!isplaying){
-            mediaPlayer = MediaPlayer.create(PlayerService.this, Uri.parse("file://"+getMp3Path()));
-            mediaPlayer.setLooping(false);
-            mediaPlayer.start();
-            isplaying = true;
-            isRelease = false;
-            isPause = false;
-        }
-    }
-
     @Override
     public IBinder onBind(Intent intent) {
         return null;
     }
+
     private String getMp3Path(){
         SDCARD = Environment.getExternalStorageDirectory()+"/";
         String filePath = SDCARD + "mp3Folder" +"/"+ singleInfo.getMp3Name();

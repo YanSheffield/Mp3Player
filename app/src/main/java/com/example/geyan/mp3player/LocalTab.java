@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.SimpleAdapter;
 
 import com.example.geyan.model.Mp3Info;
 import com.example.geyan.util.FileUtil;
@@ -45,9 +46,9 @@ public class LocalTab extends Fragment {
         System.out.println("ontart");
         listView = (ListView) view.findViewById(R.id.listViewlocal);
         finalResult = localMp3List();
-        ArrayAdapter<Map<String,String>> arrayAdapter = new ArrayAdapter<Map<String, String>>
-                (getActivity(),android.R.layout.simple_list_item_1,finalResult);
-        listView.setAdapter(arrayAdapter);
+        SimpleAdapter simpleAdapter = new SimpleAdapter(getActivity(),finalResult,R.layout.mp3info,new String[]{"song_name","song_size"},
+                new int[]{R.id.mp3_Name,R.id.mp3_Size});
+        listView.setAdapter(simpleAdapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {

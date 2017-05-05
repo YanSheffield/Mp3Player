@@ -16,6 +16,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.SimpleAdapter;
 import android.widget.Toast;
 
 import com.example.geyan.download.HttpDownloader;
@@ -100,9 +101,13 @@ public class RemoteTab extends Fragment {
             finalResult = getListViewContent(list,infos);
             setFinalResult(finalResult);
 
-            ArrayAdapter<Map<String,String>> arrayAdapter = new ArrayAdapter<Map<String, String>>(getActivity(),
-                    android.R.layout.simple_list_item_1,finalResult);
-            listView.setAdapter(arrayAdapter);
+//            ArrayAdapter<Map<String,String>> arrayAdapter = new ArrayAdapter<Map<String, String>>(getActivity(),
+//                    android.R.layout.simple_list_item_1,finalResult);
+//            ArrayAdapter<Map<String,String>> arrayAdapter = new ArrayAdapter<Map<String, String>>(getActivity(),R.layout.mp3info,
+//                    )
+            SimpleAdapter simpleAdapter = new SimpleAdapter(getActivity(),finalResult,R.layout.mp3info,new String[]{"song_name","song_size"},
+                    new int[]{R.id.mp3_Name,R.id.mp3_Size});
+            listView.setAdapter(simpleAdapter);
             listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
