@@ -70,13 +70,13 @@ public class RemoteTab extends Fragment {
         }else
             return false;
         }
-    private void requestPermission(){
-        if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(),Manifest.permission.WRITE_EXTERNAL_STORAGE)){
-            Toast.makeText(getActivity(),"Write External Storage permission allows us to do store images",Toast.LENGTH_LONG).show();
-        }else {
-            ActivityCompat.requestPermissions(getActivity(),new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE}, PERMISSION_REQUEST_CODE);
+        private void requestPermission(){
+            if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(),Manifest.permission.WRITE_EXTERNAL_STORAGE)){
+                Toast.makeText(getActivity(),"Write External Storage permission allows us to do store images",Toast.LENGTH_LONG).show();
+            }else {
+                ActivityCompat.requestPermissions(getActivity(),new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE}, PERMISSION_REQUEST_CODE);
+            }
         }
-    }
 
     //当从loop中取值的时候调用
      class MyHandler extends Handler{
@@ -96,43 +96,48 @@ public class RemoteTab extends Fragment {
 //
         @Override
         public void handleMessage(Message msg){
+            Intent intent = getActivity().getIntent();
+            final boolean isLogin = intent.getBooleanExtra("islogin",false);
             this.StrXMl = (String) msg.obj;
             analyzeXML();
             finalResult = getListViewContent(list,infos);
             setFinalResult(finalResult);
-
-//            ArrayAdapter<Map<String,String>> arrayAdapter = new ArrayAdapter<Map<String, String>>(getActivity(),
-//                    android.R.layout.simple_list_item_1,finalResult);
-//            ArrayAdapter<Map<String,String>> arrayAdapter = new ArrayAdapter<Map<String, String>>(getActivity(),R.layout.mp3info,
-//                    )
             SimpleAdapter simpleAdapter = new SimpleAdapter(getActivity(),finalResult,R.layout.mp3info,new String[]{"song_name","song_size"},
                     new int[]{R.id.mp3_Name,R.id.mp3_Size});
             listView.setAdapter(simpleAdapter);
             listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    System.out.println("position " + position + " id " + id);
-                    //把mp3info对象传到service中，类似于activity之间传输数据
-                    //TO DO 为什么service？他的优先级较高，即使这个程序被关闭，下载仍可以继续，这个符合要求的
-                    //根据用户点击，得到这个mp3对象
-                    Mp3Info singleMp3info = infos.get(position);
-                    //创建一个intent对象
-                    Intent intent = new Intent(getActivity(),DownloadService.class);
-                    //将mp3info对象存入到intent中
-                    intent.putExtra("mp3Info", singleMp3info);
-                    intent.setClass(getActivity(), DownloadService.class);
-                    //启动service
-                    if (Build.VERSION.SDK_INT >= 23) {
-                        if (checkPermisson()) {
-                            getActivity().startService(intent);
-                        } else {
-                            requestPermission();
-                        }
+                    if (isLogin==true){
+                        startDownload(position, id);
+                    }else {
+                        Toast.makeText(getActivity(),"Please login first",Toast.LENGTH_LONG).show();
                     }
                 }
             });
         }
-//
+
+        public void startDownload(int position, long id) {
+            //把mp3info对象传到service中，类似于activity之间传输数据
+            //TO DO 为什么service？他的优先级较高，即使这个程序被关闭，下载仍可以继续，这个符合要求的
+            //根据用户点击，得到这个mp3对象
+            Mp3Info singleMp3info = infos.get(position);
+            //创建一个intent对象
+            Intent intent = new Intent(getActivity(),DownloadService.class);
+            //将mp3info对象存入到intent中
+            intent.putExtra("mp3Info", singleMp3info);
+            intent.setClass(getActivity(), DownloadService.class);
+            //启动service
+            if (Build.VERSION.SDK_INT >= 23) {
+                if (checkPermisson()) {
+                    getActivity().startService(intent);
+                } else {
+                    requestPermission();
+                }
+            }
+        }
+
+        //
         private void analyzeXML() {
             //创建SAXParserFactory
             SAXParserFactory saxParserFactory = SAXParserFactory.newInstance();
@@ -157,6 +162,7 @@ public class RemoteTab extends Fragment {
                 map.put("song_name", mp3Info.getMp3Name());
                 map.put("song_size", mp3Info.getMp3Size());
                 list.add(map);
+                //do not add the same song name to remote list
                 if (temp != 1) {
                     for (int i = 0; i < list.size()-1; i++) {
                         if (map.equals(list.get(i))) {
@@ -170,5 +176,5 @@ public class RemoteTab extends Fragment {
             return list;
         }
     }
-        }
+}
 

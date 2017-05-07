@@ -5,10 +5,12 @@ import android.content.Intent;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Environment;
+import android.os.Handler;
 import android.os.IBinder;
 import android.support.annotation.IntDef;
 import android.support.annotation.Nullable;
 import android.widget.ImageButton;
+import android.widget.SeekBar;
 
 import com.example.geyan.model.Mp3Info;
 import com.example.geyan.mp3player.PlayerActivity;
@@ -27,8 +29,14 @@ public class PlayerService extends Service{
     private boolean isRelease = false;
     private Mp3Info singleInfo;
 
+    private SeekBar seekBar = null;
+    private Handler handler = new Handler();
+    Runnable runnable;
+    private int i;
+
     @Override
     public int onStartCommand(Intent intent,int flags,int startId){
+        System.out.println("----second "+i);
         //从activity中得到mp3INfo对象
         singleInfo = (Mp3Info) intent.getSerializableExtra("mp3Info");
         int MSG = intent.getIntExtra("MSG",0);
@@ -91,7 +99,7 @@ public class PlayerService extends Service{
         return null;
     }
 
-    private String getMp3Path(){
+    public String getMp3Path(){
         SDCARD = Environment.getExternalStorageDirectory()+"/";
         String filePath = SDCARD + "mp3Folder" +"/"+ singleInfo.getMp3Name();
         return filePath;

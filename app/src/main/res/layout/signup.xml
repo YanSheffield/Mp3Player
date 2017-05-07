@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <TableLayout
+        android:layout_width="368dp"
+        android:layout_height="495dp"
+        android:paddingLeft="20dp"
+        android:paddingTop="20dp">
+        <TextView
+            android:id="@+id/user_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Name :"
+            android:textSize="9pt"
+            tools:layout_editor_absoluteX="16dp"
+            tools:layout_editor_absoluteY="16dp" />
+
+        <EditText
+            android:id="@+id/name_edit"
+            android:layout_width="368dp"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:inputType="textPersonName" />
+
+        <TextView
+            android:id="@+id/email_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Email Address :"
+            android:textSize="9pt"/>
+
+        <EditText
+            android:id="@+id/email_edit"
+            android:layout_width="368dp"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:inputType="textPersonName" />
+
+        <TextView
+            android:id="@+id/password_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Password :"
+            android:textSize="9pt"/>
+
+        <EditText
+            android:id="@+id/password_edit"
+            android:layout_width="368dp"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:inputType="textPassword"
+            />
+
+        <TextView
+            android:id="@+id/confirm_password_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Confirm Password :"
+            android:textSize="9pt"/>
+
+        <EditText
+            android:id="@+id/confirm_password_edit"
+            android:layout_width="368dp"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:inputType="textPassword"
+            />
+        <TableRow>
+            <Button
+                android:id="@+id/sign_up_btn_confirm"
+                android:text="Sign up"
+                />
+
+            <Button
+                android:id="@+id/cancel"
+                android:text="Cancel"
+                />
+        </TableRow>
+    </TableLayout>
+</LinearLayout>

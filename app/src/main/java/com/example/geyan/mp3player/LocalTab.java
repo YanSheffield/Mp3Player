@@ -3,7 +3,11 @@ package com.example.geyan.mp3player;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -32,18 +36,17 @@ public class LocalTab extends Fragment {
     private boolean isDeleted = false;
     private View view;
     private ListView listView;
-
+    MenuItem memu;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view =  inflater.inflate(R.layout.local, container, false);
-        System.out.println("onCreateview");
+        setHasOptionsMenu(true);
         return view;
     }
 
     @Override
     public void onStart() {
         super.onStart();
-        System.out.println("ontart");
         listView = (ListView) view.findViewById(R.id.listViewlocal);
         finalResult = localMp3List();
         SimpleAdapter simpleAdapter = new SimpleAdapter(getActivity(),finalResult,R.layout.mp3info,new String[]{"song_name","song_size"},
@@ -55,6 +58,9 @@ public class LocalTab extends Fragment {
                 if (mp3FilesList !=null){
                     Mp3Info mp3Info = mp3FilesList.get(position);
                     Intent intent = new Intent();
+
+                    intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+
                     //传递一个对象，因为实现了sizalizable
                     intent.putExtra("mp3Info",mp3Info);
                     intent.setClass(getActivity(),PlayerActivity.class);
@@ -67,8 +73,6 @@ public class LocalTab extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        System.out.println("onresume");
-
     }
 
     public ArrayList localMp3List(){
@@ -76,15 +80,16 @@ public class LocalTab extends Fragment {
         mp3FilesList = fileUtil.getDownloadedMp3Files("mp3Folder/");
         Intent intent = getActivity().getIntent();
         isDeleted = intent.getBooleanExtra("isDeleted",false);
-        if (isDeleted == false) {
+//        if (isDeleted) {
             for (Mp3Info mp3Info : mp3FilesList) {
                 inidividualList = new HashMap<>();
                 inidividualList.put("song_name", mp3Info.getMp3Name());
                 inidividualList.put("song_size", mp3Info.getMp3Size());
                 totalList.add(inidividualList);
-                System.out.println("totoal " + totalList);
+                //do not add the same song name to remote list,but
+                //do not check the last element because it is itself
                 if (temp != 0) {
-                    for (int i = 0; i < totalList.size(); i++) {
+                    for (int i = 0; i < totalList.size()-1; i++) {
                         if (inidividualList.equals(totalList.get(i))) {
                             totalList.remove(i);
                         }
@@ -92,7 +97,31 @@ public class LocalTab extends Fragment {
                 }
                 temp = temp + 1;
             }
-        }
+//        }
         return totalList;
+    }
+
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        memu = menu.add("refresh");
+        memu = menu.add("sign out");
+    }
+
+    /**
+     * 点击菜单中任意一个选项，都会触发此函数
+     * @param item
+     * @return
+     */
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if(item.getItemId()== 0){
+            FragmentTransaction ft = getFragmentManager().beginTransaction();
+            ft.detach(this).attach(this).commit();
+        }else if (item.getItemId()==1){
+            Intent intent = new Intent();
+            intent.setClass(getActivity(),MainActivity.class);
+            intent.putExtra("islogin",false);
+            startActivity(intent);
+        }
+        return super.onOptionsItemSelected(item);
     }
 }
