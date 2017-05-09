@@ -73,7 +73,6 @@ public class FileUtil {
     //得到SDcard里面mp3的信息
     public List<Mp3Info> getDownloadedMp3Files(String path){
         List<Mp3Info> mp3InfoList = new ArrayList<>();
-        List<LyricInfo> lyricInfos = new ArrayList<>();
         File file = new File(SDCARD + path);
         File[] files = file.listFiles();
         for (File mp3File:files){
@@ -83,11 +82,24 @@ public class FileUtil {
                 mp3Info.setMp3Size(mp3File.length()/10000+"M");
                 mp3InfoList.add(mp3Info);
             }
-            //TODO:
-            if (mp3File.getName().endsWith("lrc")){
-
-            }
         }
         return mp3InfoList;
+    }
+
+    //search lrc file in SD card
+    //TODO: it can be more efficient eg.lyric files should be put in a new folder
+    public List<LyricInfo> getDownloadLrc(String path){
+        List<LyricInfo> lrcList = new ArrayList<>();
+        File file = new File(SDCARD + path);
+        File[] files = file.listFiles();
+        for (File lrcFile:files){
+            if (lrcFile.getName().endsWith("lrc")){
+                LyricInfo lyricInfo = new LyricInfo();
+                lyricInfo.setLycName(lrcFile.getName());
+                lyricInfo.setLycSize(lrcFile.length()+"");
+                lrcList.add(lyricInfo);
+            }
+        }
+        return lrcList;
     }
 }

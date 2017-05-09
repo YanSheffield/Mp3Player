@@ -18,11 +18,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.geyan.lrc.LrcProcessor;
+import com.example.geyan.model.LyricInfo;
 import com.example.geyan.model.Mp3Info;
 import com.example.geyan.service.PlayerService;
+import com.example.geyan.util.FileUtil;
 
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
@@ -46,13 +49,13 @@ public class PlayerActivity extends AppCompatActivity {
     private TextView lyricTextview = null;
     private String lyricHttp = "https://raw.githubusercontent.com/YanSheffield/mp3Service/master/first-text.lrc";
     private UpdateTimeCallback updateTimeCallback;
-    private LyricHandler lyricHandler = new LyricHandler();
     private long begin = 0;
     private boolean ispause = false;
     private long pauseTime = 0;
     private long pausesartTime = 0;
     private long diff = 0;
     private List<Mp3Info> mp3FilesList;
+    private List<LyricInfo> lyricInfoList;
     private boolean isDeleted = false;
     private SeekBar seekBar;
     private PlayerService playerService;
@@ -64,10 +67,12 @@ public class PlayerActivity extends AppCompatActivity {
     private boolean isPause = false;
     private boolean isRelease = false;
     private Mp3Info singleInfo;
+    private LyricInfo singleLyric;
     private Handler handler = new Handler();
     private Runnable runnable;
     private SeekBarEdition seekBarEdition;
     private boolean isFirstStart = true;
+    private TextView songName;
 
     private TextView processTime;
 
@@ -77,12 +82,16 @@ public class PlayerActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.player);
         final Intent intent = getIntent();
+        SDCARD = Environment.getExternalStorageDirectory()+"/";
         singleInfo = (Mp3Info) intent.getSerializableExtra("mp3Info");
+        singleLyric = (LyricInfo) intent.getSerializableExtra("lyric");
         pauseButton = (ImageButton) findViewById(R.id.pausebtn);
         lyricTextview = (TextView) findViewById(R.id.lyricText);
         seekBar = (SeekBar) findViewById(R.id.seekbar);
         pauseButton.setBackgroundResource(R.drawable.start);
         processTime = (TextView) findViewById(R.id.processTime);
+        songName = (TextView) findViewById(R.id.songName);
+        songName.setText(singleInfo.getMp3Name());
         activityPlayer = this;
 
         pauseButton.setOnClickListener(new View.OnClickListener() {
@@ -93,7 +102,6 @@ public class PlayerActivity extends AppCompatActivity {
                     pausePlay();
                     pauseTime = System.currentTimeMillis();
                 }else {
-                    System.out.println("name "+singleInfo.getMp3Name()+"  link"+singleInfo.getLrcLink());
                     if (!isFirstStart){
                         diff = System.currentTimeMillis() - pauseTime;
                     }
@@ -101,13 +109,11 @@ public class PlayerActivity extends AppCompatActivity {
                         mediaPlayer = MediaPlayer.create(getApplicationContext(), Uri.parse("file://"+getMp3Path()));
                         begin = System.currentTimeMillis();
                         seekBarEdition = new SeekBarEdition();
+//                        updateTimeCallback = new UpdateTimeCallback();
+                        isFirstStart = false;
                     }
                     pauseButton.setBackgroundResource(R.drawable.pause);
                     pausePlay();
-                    if (isFirstStart){
-                        updateTimeCallback = new UpdateTimeCallback(lyricHandler);
-                        isFirstStart = false;
-                    }
                 }
             }
         });
@@ -123,7 +129,9 @@ public class PlayerActivity extends AppCompatActivity {
             playerService.stopPlay();
             //TODO: the first mp3 will be deleted whatever you clicked
             File file = new File(getMp3Path());
+            File lyricFile = new File(getMp3Path());
             file.delete();
+            lyricFile.delete();
             Intent intent = new Intent();
             intent.putExtra("isDeleted",true);
             intent.putExtra("islogin",true);
@@ -172,11 +180,13 @@ public class PlayerActivity extends AppCompatActivity {
 
 
     public String getMp3Path(){
-        SDCARD = Environment.getExternalStorageDirectory()+"/";
         String filePath = SDCARD + "mp3Folder" +"/"+ singleInfo.getMp3Name();
         return filePath;
     }
-
+    public String getLyricPath(){
+        String lyricPath = SDCARD+ "lyricFolder"+"/"+singleLyric.getLycName();
+        return lyricPath;
+    }
     @Override
     public void onBackPressed() {
         Intent intent = new Intent(this, MainActivity.class);
@@ -188,6 +198,8 @@ public class PlayerActivity extends AppCompatActivity {
     class SeekBarEdition{
 
         public SeekBarEdition(){
+
+            updateTimeCallback = new UpdateTimeCallback();
             mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
 
             mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
@@ -206,6 +218,7 @@ public class PlayerActivity extends AppCompatActivity {
                         mediaPlayer.seekTo(progress);
                     }
                     fromMill2Sec(progress);
+                    updateTimeCallback.setProcess(progress);
                 }
 
                 @Override
@@ -222,7 +235,6 @@ public class PlayerActivity extends AppCompatActivity {
         public void fromMill2Sec(int progress) {
             int minites = (progress/1000)/60;
             int seconds = (progress/1000);
-            System.out.println("second "+seconds);
             if (seconds>=60){
                 seconds = seconds - (minites*60);
             }
@@ -248,19 +260,33 @@ public class PlayerActivity extends AppCompatActivity {
     }
 
     class UpdateTimeCallback implements Runnable{
-
+        private LyricHandler lyricHandler = new LyricHandler();
         private long currentTimeMill = 0;
         private long nextTimeMill = 0;
         private String lyricPoll;
         private LrcProcessor lrcProcessor = new LrcProcessor();
         private ArrayList<Queue> lyricQueues;
-        private LyricHandler lyricHandler;
         long offset;
+        private boolean firstLyric = true;
 
-        UpdateTimeCallback(LyricHandler lyricHandler){
-            this.lyricHandler = lyricHandler;
-            Thread thread = new Thread(this);
-            thread.start();
+        private int process;
+
+        UpdateTimeCallback(){
+
+        }
+
+        public int getProcess() {
+            return process;
+        }
+
+        public void setProcess(int process) {
+            this.process = process;
+            System.out.println(process);
+            if (firstLyric){
+                Thread thread = new Thread(this);
+                thread.start();
+                firstLyric = false;
+            }
         }
 
         public void updateLyricView(ArrayList<Queue> lyricQueues){
@@ -275,7 +301,7 @@ public class PlayerActivity extends AppCompatActivity {
             while (timeQueue.size()>= 1 && lyricQueue.size()>= 1){
 
                 offset = System.currentTimeMillis() - begin - diff;
-                ispause = false;
+//                ispause = false;
                 if (currentTimeMill == 0 && isplaying==true){
                     nextTimeMill = (long) timeQueue.poll();
                     lyricPoll = (String) lyricQueue.poll();
@@ -284,7 +310,7 @@ public class PlayerActivity extends AppCompatActivity {
                     lyricHandler.sendMessage(lyricMessage);
                     currentTimeMill = currentTimeMill+10;
                 }
-                if (offset >= nextTimeMill&& isplaying==true){
+                if (process >= nextTimeMill&& isplaying==true){
                     Message lyricMessage = lyricHandler.obtainMessage();
                     lyricMessage.obj = lyricPoll;
                     lyricHandler.sendMessage(lyricMessage);
@@ -292,7 +318,7 @@ public class PlayerActivity extends AppCompatActivity {
                     lyricPoll = (String) lyricQueue.poll();
                 }
                 try {
-                    Thread.sleep(500);
+                    Thread.sleep(50);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -302,10 +328,9 @@ public class PlayerActivity extends AppCompatActivity {
         @Override
         public void run() {
             try {
-                URL lyric_url = new URL("https://raw.githubusercontent.com/YanSheffield/mp3Service/master/first-text.lrc");
-                HttpURLConnection urlConnection = (HttpURLConnection) lyric_url.openConnection();
-                InputStream lyric_inputStream = urlConnection.getInputStream();
-                lyricQueues = lrcProcessor.processLrc(lyric_inputStream);
+                File lyric = new File(getLyricPath());
+                InputStream stream = new FileInputStream(lyric);
+                lyricQueues = lrcProcessor.processLrc(stream);
                 if (lyricQueues!=null){
                     updateLyricView(lyricQueues);
                 }

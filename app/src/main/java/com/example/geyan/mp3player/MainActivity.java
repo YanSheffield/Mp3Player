@@ -79,8 +79,6 @@ public class MainActivity extends AppCompatActivity {
             intent.setClass(MainActivity.this, Signup.class);
             startActivity(intent);
         }
-
-
         return super.onOptionsItemSelected(item);
     }
 }

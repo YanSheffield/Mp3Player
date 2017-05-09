@@ -15,6 +15,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 
+import com.example.geyan.model.LyricInfo;
 import com.example.geyan.model.Mp3Info;
 import com.example.geyan.util.FileUtil;
 
@@ -31,12 +32,15 @@ public class LocalTab extends Fragment {
     private ArrayList<HashMap<String,String>> totalList = new ArrayList<>();
     private HashMap<String,String> inidividualList;
     private List<Mp3Info> mp3FilesList;
+    private List<LyricInfo> lyricInfoList;
     private ArrayList finalResult;
     private int temp = 0;
     private boolean isDeleted = false;
     private View view;
     private ListView listView;
     MenuItem memu;
+    private LyricInfo singleLyricOne;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view =  inflater.inflate(R.layout.local, container, false);
@@ -61,15 +65,17 @@ public class LocalTab extends Fragment {
                     boolean isFirst = intent.getBooleanExtra("isFirstPLayer",true);
                     Mp3Info isplaying_mp3Info = (Mp3Info) intent.getSerializableExtra("isPlayingMp3");
                     Mp3Info mp3Info = mp3FilesList.get(position);
-
-//                    if (!isFirst&&(!isplaying_mp3Info.getMp3Name().equals(mp3Info.getMp3Name()))){
-//                        PlayerActivity.getInstance().finish();
-//                        System.out.println("+++++++"+isFirst);
-//                        System.out.println("++"+isplaying_mp3Info.getMp3Name());
-//                        System.out.println("++"+mp3Info.getMp3Name());
-//                    }
+                    System.out.println("Lyric info "+lyricInfoList);
+                    System.out.println("mp333 "+mp3Info.getMp3Name().substring(0, mp3Info.getMp3Name().length()-4));
+                    for (LyricInfo singleLyric:lyricInfoList){
+                        if (mp3Info.getMp3Name().substring(0, mp3Info.getMp3Name().length()-4).
+                                equals(singleLyric.getLycName().substring(0,singleLyric.getLycName().length()-4))){
+                             singleLyricOne = singleLyric;
+                        }
+                    }
                     //传递一个对象，因为实现了sizalizable
                     intent.putExtra("mp3Info",mp3Info);
+                    intent.putExtra("lyric",singleLyricOne);
                     intent.setClass(getActivity(),PlayerActivity.class);
                     startActivity(intent);
                 }
@@ -85,6 +91,8 @@ public class LocalTab extends Fragment {
     public ArrayList localMp3List(){
         FileUtil fileUtil = new FileUtil();
         mp3FilesList = fileUtil.getDownloadedMp3Files("mp3Folder/");
+        lyricInfoList = fileUtil.getDownloadLrc("lyricFolder/");
+
         Intent intent = getActivity().getIntent();
         isDeleted = intent.getBooleanExtra("isDeleted",false);
 //        if (isDeleted) {

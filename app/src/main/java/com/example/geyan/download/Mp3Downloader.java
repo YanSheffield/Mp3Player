@@ -1,5 +1,9 @@
 package com.example.geyan.download;
 
+import android.content.Intent;
+import android.widget.Toast;
+
+import com.example.geyan.mp3player.MainActivity;
 import com.example.geyan.util.FileUtil;
 
 import java.io.File;
@@ -32,6 +36,7 @@ public class Mp3Downloader {
                 //从网上拿到（读）文件存到流中
                 InputStream inputStream = urlConnection.getInputStream();
                 File resultFile = fileUtil.write2SDFromInput(path,fileName,inputStream);
+
                 if (resultFile==null){
                     System.out.println("下载文件是空的");
                     downloadStatus = -1;
