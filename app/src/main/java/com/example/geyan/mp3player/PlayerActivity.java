@@ -73,7 +73,7 @@ public class PlayerActivity extends AppCompatActivity {
     private SeekBarEdition seekBarEdition;
     private boolean isFirstStart = true;
     private TextView songName;
-
+    private boolean isStopThread = false;
     private TextView processTime;
 
     static PlayerActivity activityPlayer;
@@ -125,19 +125,24 @@ public class PlayerActivity extends AppCompatActivity {
             finish();
         }
         if (item.getItemId()==1){
-            PlayerService playerService = new PlayerService();
-            playerService.stopPlay();
+//            PlayerService playerService = new PlayerService();
+//            playerService.stopPlay();
             //TODO: the first mp3 will be deleted whatever you clicked
             File file = new File(getMp3Path());
             File lyricFile = new File(getMp3Path());
             file.delete();
             lyricFile.delete();
+            isplaying = false;
             Intent intent = new Intent();
             intent.putExtra("isDeleted",true);
             intent.putExtra("islogin",true);
+            intent.putExtra("user_name",singleInfo.getMp3Name());
+
             Toast.makeText(this,"finish delete",Toast.LENGTH_SHORT).show();
             intent.setClass(this,MainActivity.class);
             startActivity(intent);
+            mediaPlayer.stop();
+           mediaPlayer.release();
         }
         return super.onOptionsItemSelected(item);
     }
@@ -187,13 +192,13 @@ public class PlayerActivity extends AppCompatActivity {
         String lyricPath = SDCARD+ "lyricFolder"+"/"+singleLyric.getLycName();
         return lyricPath;
     }
-    @Override
-    public void onBackPressed() {
-        Intent intent = new Intent(this, MainActivity.class);
-        intent.putExtra("isFirstPLayer",false);
-        intent.putExtra("isPlayingMp3",singleInfo);
-        startActivity(intent);
-    }
+//    @Override
+//    public void onBackPressed() {
+//        Intent intent = new Intent(this, MainActivity.class);
+//        intent.putExtra("isFirstPLayer",false);
+//        intent.putExtra("isPlayingMp3",singleInfo);
+//        startActivity(intent);
+//    }
 
     class SeekBarEdition{
 
@@ -251,7 +256,9 @@ public class PlayerActivity extends AppCompatActivity {
                 runnable = new Runnable() {
                     @Override
                     public void run() {
-                        playCycle();
+                        if (isplaying){
+                            playCycle();
+                        }
                     }
                 };
                 handler.postDelayed(runnable,1000);
@@ -266,7 +273,7 @@ public class PlayerActivity extends AppCompatActivity {
         private String lyricPoll;
         private LrcProcessor lrcProcessor = new LrcProcessor();
         private ArrayList<Queue> lyricQueues;
-        long offset;
+//        long offset;
         private boolean firstLyric = true;
 
         private int process;
@@ -281,7 +288,6 @@ public class PlayerActivity extends AppCompatActivity {
 
         public void setProcess(int process) {
             this.process = process;
-            System.out.println(process);
             if (firstLyric){
                 Thread thread = new Thread(this);
                 thread.start();
@@ -300,7 +306,7 @@ public class PlayerActivity extends AppCompatActivity {
 //            while (timeQueue != null && lyricQueue!= null){
             while (timeQueue.size()>= 1 && lyricQueue.size()>= 1){
 
-                offset = System.currentTimeMillis() - begin - diff;
+//                offset = System.currentTimeMillis() - begin - diff;
 //                ispause = false;
                 if (currentTimeMill == 0 && isplaying==true){
                     nextTimeMill = (long) timeQueue.poll();

@@ -10,6 +10,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -75,11 +76,12 @@ public class FileUtil {
         List<Mp3Info> mp3InfoList = new ArrayList<>();
         File file = new File(SDCARD + path);
         File[] files = file.listFiles();
+        DecimalFormat df = new DecimalFormat("#.##");
         for (File mp3File:files){
             if (mp3File.getName().endsWith("mp3")){
                 Mp3Info mp3Info = new Mp3Info();
                 mp3Info.setMp3Name(mp3File.getName());
-                mp3Info.setMp3Size(mp3File.length()/10000+"M");
+                mp3Info.setMp3Size(df.format(mp3File.length()/1024.0f/1024.0f)+" M");
                 mp3InfoList.add(mp3Info);
             }
         }

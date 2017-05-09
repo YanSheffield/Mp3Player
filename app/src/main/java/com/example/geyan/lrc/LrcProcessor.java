@@ -34,11 +34,7 @@ public class LrcProcessor {
         InputStream bufferedInputStream = new BufferedInputStream(inputStream);
         Reader reader = new InputStreamReader(bufferedInputStream);
         BufferedReader bufferedReadLine = new BufferedReader(reader);
-//        String line;
-//        while ((line = bufferedReadLine.readLine())!=null){
-//            lineContent.append(line);
-//        }
-//        bufferedReadLine.close();
+
         String temp = null;
         int i = 0;
         //craete a Regulation express to seek "[]"
@@ -67,7 +63,6 @@ public class LrcProcessor {
                 result = result + temp + "\n";
                 lyrics.add(result);
             }
-//            lyrics.add(result);
             //add two queues to an arraylist.one for time,and one for lyric
             queues.add(timeMills);
             queues.add(lyrics);

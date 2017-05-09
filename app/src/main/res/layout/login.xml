@@ -43,12 +43,13 @@
             <Button
                 android:id="@+id/login_btn"
                 android:text="Login"
+                android:layout_marginLeft="20pt"
                 />
 
             <Button
                 android:id="@+id/sign_up_btn"
-                android:text="Sign up"
-                />
+                android:layout_marginLeft="40pt"
+                android:text="Sign up" />
         </TableRow>
 
 

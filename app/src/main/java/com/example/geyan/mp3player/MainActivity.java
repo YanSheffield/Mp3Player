@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.geyan.access.Login;
@@ -21,8 +22,9 @@ import java.io.File;
 
 public class MainActivity extends AppCompatActivity {
 
-//    private boolean isLogin = false;
     PageAdapter adapter = null;
+    private TextView userText;
+    private boolean isLogin = false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -32,11 +34,12 @@ public class MainActivity extends AppCompatActivity {
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tab_layout);
         tabLayout.addTab(tabLayout.newTab().setText("Remote"));
         Intent intent = getIntent();
-        boolean isLogin = intent.getBooleanExtra("islogin",false);
-        System.out.println("------islogin "+isLogin);
-//        if (isLogin){
+        isLogin = intent.getBooleanExtra("islogin",false);
+        if (isLogin){
+            userText = (TextView) findViewById(R.id.username);
+            userText.setText("Welcome ! "+intent.getStringExtra("user_name"));
             tabLayout.addTab(tabLayout.newTab().setText("Local"));
-//        }
+        }
         tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
 
         final ViewPager viewPager = (ViewPager) findViewById(R.id.pager);
@@ -63,21 +66,25 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public boolean onCreateOptionsMenu(Menu menu){
-        menu.add(0,1,1,R.string.sign_in);
-        menu.add(0,2,2, R.string.sign_up);
+        if (!isLogin){
+            menu.add(0,1,1,R.string.sign_in);
+            menu.add(0,2,2, R.string.sign_up);
+        }
         return super.onCreateOptionsMenu(menu);
     }
     @Override
     public boolean onOptionsItemSelected(MenuItem item){
-        if (item.getItemId()==1){
-            Intent intent = new Intent();
-            intent.setClass(MainActivity.this, Login.class);
-            startActivity(intent);
-        }
-        if (item.getItemId()==2){
-            Intent intent = new Intent();
-            intent.setClass(MainActivity.this, Signup.class);
-            startActivity(intent);
+        if (!isLogin){
+            if (item.getItemId()==1){
+                Intent intent = new Intent();
+                intent.setClass(MainActivity.this, Login.class);
+                startActivity(intent);
+            }
+            if (item.getItemId()==2){
+                Intent intent = new Intent();
+                intent.setClass(MainActivity.this, Signup.class);
+                startActivity(intent);
+            }
         }
         return super.onOptionsItemSelected(item);
     }

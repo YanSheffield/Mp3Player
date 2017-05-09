@@ -22,6 +22,7 @@ import android.widget.Toast;
 import com.example.geyan.download.HttpDownloader;
 import com.example.geyan.model.Mp3Info;
 import com.example.geyan.service.DownloadService;
+import com.example.geyan.util.FileUtil;
 import com.example.geyan.xml.Mp3ListContentHandler;
 
 import org.xml.sax.InputSource;
@@ -54,6 +55,7 @@ public class RemoteTab extends Fragment {
     private int temp = 1;
     private ListView listView = null;
     private View view;
+    private List<Mp3Info> mp3FilesList;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view =  inflater.inflate(R.layout.remote, container, false);
@@ -108,11 +110,22 @@ public class RemoteTab extends Fragment {
             listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-//                    if (isLogin==true){
-                        startDownload(position, id);
-//                    }else {
-//                        Toast.makeText(getActivity(),"Please login first",Toast.LENGTH_LONG).show();
-//                    }
+                    if (isLogin==true){
+                        FileUtil fileUtil = new FileUtil();
+                        boolean isSame = false;
+                        mp3FilesList = fileUtil.getDownloadedMp3Files("mp3Folder/");
+                        for (Mp3Info mp3Info:mp3FilesList){
+                            if (mp3Info.getMp3Name().equals(infos.get(position).getMp3Name())){
+                                Toast.makeText(getActivity(),"You have downloaded the same song",Toast.LENGTH_LONG).show();
+                                isSame = true;
+                            }
+                        }
+                        if (!isSame){
+                            startDownload(position, id);
+                        }
+                    }else {
+                        Toast.makeText(getActivity(),"Please login before downloading",Toast.LENGTH_LONG).show();
+                    }
                 }
             });
         }

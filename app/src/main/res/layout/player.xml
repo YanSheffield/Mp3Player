@@ -49,6 +49,7 @@
         android:layout_alignRight="@+id/pausebtn"
         android:layout_alignEnd="@+id/pausebtn">
      </ImageView>
+
       <TextView
         android:id="@+id/processTime"
         android:layout_width="wrap_content"

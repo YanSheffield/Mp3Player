@@ -57,13 +57,10 @@ public class DownloadService extends Service {
             Mp3Downloader mp3Downloader = new Mp3Downloader();
             for(int i = 0;i<2;i++){
                 if (i == 0){
-//                    System.out.println("downMp3");
                     String mp3Url = singlemp3Info.getMp3Link();
                     mp3Downloader.downloadMp3File(mp3Url,"mp3Folder",singlemp3Info.getMp3Name());
                 }else {
-//                    System.out.println("downLrc");
                     String mp3Url = singlemp3Info.getLrcLink();
-//                    System.out.println("downLrc"+singlemp3Info.getLrcLink());
                     //store in "lyricFolder"
                     mp3Downloader.downloadMp3File(mp3Url,"lyricFolder",singlemp3Info.getIrcName());
                 }
@@ -77,27 +74,28 @@ public class DownloadService extends Service {
 //                Toast.makeText(getApplicationContext(),R.string.downloadStatus_depulicated,Toast.LENGTH_SHORT).show();
 //            }
         }
+        @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
+        public void createNotification(){
+            Intent intent = new Intent();
+            TaskStackBuilder taskStackBuilder = TaskStackBuilder.create(DownloadService.this);
+            taskStackBuilder.addParentStack(MainActivity.class);
+            taskStackBuilder.addNextIntent(intent);
+
+            PendingIntent pendingIntent = taskStackBuilder.getPendingIntent(0,PendingIntent.FLAG_UPDATE_CURRENT);
+
+            Notification notification = new Notification.Builder(DownloadService.this)
+                    .setSmallIcon(R.mipmap.ic_launcher)
+                    .setContentTitle(singlemp3Info.getMp3Name()+" Download Success!")
+                    .setAutoCancel(true)
+                    .setPriority(Notification.PRIORITY_MAX)
+                    .setDefaults(Notification.DEFAULT_VIBRATE)
+                    .setContentIntent(pendingIntent)
+                    .build();
+
+            NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+            notificationManager.notify(234,notification);
+        }
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
-    public void createNotification(){
-        Intent intent = new Intent();
-        TaskStackBuilder taskStackBuilder = TaskStackBuilder.create(this);
-        taskStackBuilder.addParentStack(MainActivity.class);
-        taskStackBuilder.addNextIntent(intent);
 
-        PendingIntent pendingIntent = taskStackBuilder.getPendingIntent(0,PendingIntent.FLAG_UPDATE_CURRENT);
-
-        Notification notification = new Notification.Builder(this)
-                .setSmallIcon(R.mipmap.ic_launcher)
-                .setContentTitle("Download Success!")
-                .setAutoCancel(true)
-                .setPriority(Notification.PRIORITY_MAX)
-                .setDefaults(Notification.DEFAULT_VIBRATE)
-                .setContentIntent(pendingIntent)
-                .build();
-
-        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        notificationManager.notify(234,notification);
-    }
 }

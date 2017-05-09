@@ -65,8 +65,6 @@ public class LocalTab extends Fragment {
                     boolean isFirst = intent.getBooleanExtra("isFirstPLayer",true);
                     Mp3Info isplaying_mp3Info = (Mp3Info) intent.getSerializableExtra("isPlayingMp3");
                     Mp3Info mp3Info = mp3FilesList.get(position);
-                    System.out.println("Lyric info "+lyricInfoList);
-                    System.out.println("mp333 "+mp3Info.getMp3Name().substring(0, mp3Info.getMp3Name().length()-4));
                     for (LyricInfo singleLyric:lyricInfoList){
                         if (mp3Info.getMp3Name().substring(0, mp3Info.getMp3Name().length()-4).
                                 equals(singleLyric.getLycName().substring(0,singleLyric.getLycName().length()-4))){
@@ -117,8 +115,8 @@ public class LocalTab extends Fragment {
     }
 
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        memu = menu.add("refresh");
-        memu = menu.add("sign out");
+        memu = menu.add(0,1,1,R.string.refresh);
+        memu = menu.add(0,2,2,R.string.sign_out);
     }
 
     /**
@@ -128,10 +126,10 @@ public class LocalTab extends Fragment {
      */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if(item.getItemId()== 0){
+        if(item.getItemId()== 1){
             FragmentTransaction ft = getFragmentManager().beginTransaction();
             ft.detach(this).attach(this).commit();
-        }else if (item.getItemId()==1){
+        }else if (item.getItemId()==2){
             Intent intent = new Intent();
             intent.setClass(getActivity(),MainActivity.class);
             intent.putExtra("islogin",false);

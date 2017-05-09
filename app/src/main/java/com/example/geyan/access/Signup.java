@@ -1,6 +1,7 @@
 package com.example.geyan.access;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -8,6 +9,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.geyan.model.UserInfo;
+import com.example.geyan.mp3player.MainActivity;
 import com.example.geyan.mp3player.R;
 
 /**
@@ -49,16 +51,31 @@ public class Signup extends Activity {
                 emailStr = email.getText().toString();
                 passwordStr = password.getText().toString();
                 password_confirm_Str = confirm_password.getText().toString();
-                if (!passwordStr.equals(password_confirm_Str)){
+
+                if (nameStr.length()==0){
+                    Toast.makeText(Signup.this, "please enter your name",Toast.LENGTH_LONG).show();
+                }else if(!emailStr.contains("@")){
+                    Toast.makeText(Signup.this, "email is invalid",Toast.LENGTH_LONG).show();
+                }else if (passwordStr.length()<5){
+                    Toast.makeText(Signup.this, "the length of password is short!",Toast.LENGTH_LONG).show();
+                }else if (!passwordStr.equals(password_confirm_Str)){
                     Toast.makeText(Signup.this, "inputted passwords are different",Toast.LENGTH_LONG).show();
                 }else {
-                    Toast.makeText(Signup.this, "inputted passwords are matched",Toast.LENGTH_LONG).show();
+                    Toast.makeText(Signup.this, "sign up success!",Toast.LENGTH_LONG).show();
                     usersinfo.setName(nameStr);
                     usersinfo.setEmail(emailStr);
                     usersinfo.setPassword(passwordStr);
                     helper.insert(usersinfo,id);
+                    Intent intent = new Intent();
+                    intent.setClass(Signup.this, MainActivity.class);
+                    intent.putExtra("user_name",nameStr);
+                    intent.putExtra("islogin",true);
+                    startActivity(intent);
                 }
+
+
             }
         });
+
     }
 }

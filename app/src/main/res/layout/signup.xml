@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:tools="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    >
     <TableLayout
         android:layout_width="368dp"
         android:layout_height="495dp"
@@ -68,15 +69,18 @@
             android:ems="10"
             android:inputType="textPassword"
             />
+
         <TableRow>
             <Button
                 android:id="@+id/sign_up_btn_confirm"
                 android:text="Sign up"
+                android:layout_marginLeft="20pt"
                 />
 
             <Button
                 android:id="@+id/cancel"
                 android:text="Cancel"
+                android:layout_marginLeft="40pt"
                 />
         </TableRow>
     </TableLayout>
