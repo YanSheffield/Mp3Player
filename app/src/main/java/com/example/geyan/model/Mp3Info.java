@@ -13,11 +13,10 @@ public class Mp3Info implements Serializable{
     private String mp3Size;
     private String ircName;
     private String ircSize;
-
+    private String mp3Link;
+    private String lrcLink;
     public Mp3Info() {
     }
-
-
 
     public Mp3Info(String id, String mp3Name, String mp3Size, String ircName, String ircSize) {
         this.id = id;
@@ -27,6 +26,13 @@ public class Mp3Info implements Serializable{
         this.ircSize = ircSize;
     }
 
+    public String getLrcLink() {
+        return lrcLink;
+    }
+
+    public void setLrcLink(String lrcLink) {
+        this.lrcLink = lrcLink;
+    }
     public String getIrcName() {
         return ircName;
     }
@@ -67,6 +73,13 @@ public class Mp3Info implements Serializable{
         return mp3Size;
     }
 
+    public String getMp3Link() {
+        return mp3Link;
+    }
+
+    public void setMp3Link(String mp3Link) {
+        this.mp3Link = mp3Link;
+    }
     @Override
     public String toString() {
         return "Mp3Info{" +

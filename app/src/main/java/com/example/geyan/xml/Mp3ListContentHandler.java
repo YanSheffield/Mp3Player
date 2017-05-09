@@ -81,13 +81,10 @@ public class Mp3ListContentHandler extends DefaultHandler {
             mp3Info.setIrcName(temp);
         }else if (tagName.equals("lrc.size")){
             mp3Info.setIrcSize(temp);
+        }else if (tagName.equals("mp3.link")){
+            mp3Info.setMp3Link(temp);
+        }else if (tagName.equals("lrc.link")){
+            mp3Info.setLrcLink(temp);
         }
     }
-//    public void setInfos(List<Mp3Info> infos) {
-//        this.infos = infos;
-//    }
-//
-//    public List<Mp3Info> getInfos() {
-//        return infos;
-//    }
 }

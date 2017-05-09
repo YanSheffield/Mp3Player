@@ -108,11 +108,11 @@ public class RemoteTab extends Fragment {
             listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    if (isLogin==true){
+//                    if (isLogin==true){
                         startDownload(position, id);
-                    }else {
-                        Toast.makeText(getActivity(),"Please login first",Toast.LENGTH_LONG).show();
-                    }
+//                    }else {
+//                        Toast.makeText(getActivity(),"Please login first",Toast.LENGTH_LONG).show();
+//                    }
                 }
             });
         }

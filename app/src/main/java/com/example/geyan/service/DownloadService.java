@@ -42,12 +42,22 @@ public class DownloadService extends Service {
         DownloadThread(Mp3Info singlemp3Info){
             this.singlemp3Info = singlemp3Info;
         }
-
         @Override
         public void run() {
-            String mp3Url = "https://raw.githubusercontent.com/YanSheffield/mp3Service/master/first-mp3.mp3";
             Mp3Downloader mp3Downloader = new Mp3Downloader();
-            int downloadStatus = mp3Downloader.downloadMp3File(mp3Url,"mp3Folder",singlemp3Info.getMp3Name());
+            for(int i = 0;i<2;i++){
+                if (i == 0){
+                    System.out.println("downMp3");
+                    String mp3Url = singlemp3Info.getMp3Link();
+                    mp3Downloader.downloadMp3File(mp3Url,"mp3Folder",singlemp3Info.getMp3Name());
+                }else {
+                    System.out.println("downLrc");
+                    String mp3Url = singlemp3Info.getLrcLink();
+                    System.out.println("downLrc"+singlemp3Info.getLrcLink());
+                    mp3Downloader.downloadMp3File(mp3Url,"mp3Folder",singlemp3Info.getIrcName());
+                }
+            }
+
 //            if (downloadStatus == -1){
 //                Toast.makeText(getApplicationContext(),R.string.downloadStatus_failure,Toast.LENGTH_SHORT).show();
 //            }else if (downloadStatus == 1){

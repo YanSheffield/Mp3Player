@@ -68,38 +68,22 @@ public class PlayerActivity extends AppCompatActivity {
     private Runnable runnable;
     private SeekBarEdition seekBarEdition;
     private boolean isFirstStart = true;
+
+    private TextView processTime;
+
+    static PlayerActivity activityPlayer;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.player);
         final Intent intent = getIntent();
         singleInfo = (Mp3Info) intent.getSerializableExtra("mp3Info");
-//        beginButton = (ImageButton) findViewById(R.id.startbtn);
-//        endButton = (ImageButton) findViewById(R.id.stoptbtn);
         pauseButton = (ImageButton) findViewById(R.id.pausebtn);
         lyricTextview = (TextView) findViewById(R.id.lyricText);
-        seekBar = (SeekBar) findViewById(R.id.seekBar);
+        seekBar = (SeekBar) findViewById(R.id.seekbar);
         pauseButton.setBackgroundResource(R.drawable.start);
-
-        System.out.println("oncreate====");
-
-//        beginButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                mediaPlayer = MediaPlayer.create(getApplicationContext(), Uri.parse("file://"+getMp3Path()));
-//                updateTimeCallback = new UpdateTimeCallback(lyricHandler);
-//                begin = System.currentTimeMillis();
-//                startPlay();
-//                seekBarEdition = new SeekBarEdition();
-//            }
-//        });
-
-//        endButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                stopPlay();
-//            }
-//        });
+        processTime = (TextView) findViewById(R.id.processTime);
+        activityPlayer = this;
 
         pauseButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -109,27 +93,26 @@ public class PlayerActivity extends AppCompatActivity {
                     pausePlay();
                     pauseTime = System.currentTimeMillis();
                 }else {
+                    System.out.println("name "+singleInfo.getMp3Name()+"  link"+singleInfo.getLrcLink());
+                    if (!isFirstStart){
+                        diff = System.currentTimeMillis() - pauseTime;
+                    }
                     if (isFirstStart){
                         mediaPlayer = MediaPlayer.create(getApplicationContext(), Uri.parse("file://"+getMp3Path()));
-                        updateTimeCallback = new UpdateTimeCallback(lyricHandler);
                         begin = System.currentTimeMillis();
                         seekBarEdition = new SeekBarEdition();
-                        isFirstStart = false;
                     }
                     pauseButton.setBackgroundResource(R.drawable.pause);
                     pausePlay();
-                    ispause = false;
-                    isplaying = true;
-                    pausesartTime = System.currentTimeMillis();
-                    diff = pausesartTime-pauseTime;
+                    if (isFirstStart){
+                        updateTimeCallback = new UpdateTimeCallback(lyricHandler);
+                        isFirstStart = false;
+                    }
                 }
             }
         });
     }
-//    @Override
-//    public void onBackPressed() {
-//        this.moveTaskToBack(true);
-//    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item){
         if (item.getItemId()==2){
@@ -164,29 +147,8 @@ public class PlayerActivity extends AppCompatActivity {
         return super.onCreateOptionsMenu(menu);
     }
 
-
-
-    public void startPlay() {
-        if(!isplaying){
-            mediaPlayer.setLooping(false);
-            isplaying = true;
-            isRelease = false;
-            isPause = false;
-            mediaPlayer.start();
-        }
-    }
-
-    public void stopPlay() {
-        if (mediaPlayer!=null){
-            if (isplaying){
-                if (!isRelease){
-                    mediaPlayer.stop();
-                    mediaPlayer.release();
-                    isRelease = true;
-                    isplaying = false;
-                }
-            }
-        }
+    public static PlayerActivity getInstance(){
+        return activityPlayer;
     }
 
     public void pausePlay() {
@@ -218,12 +180,16 @@ public class PlayerActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         Intent intent = new Intent(this, MainActivity.class);
+        intent.putExtra("isFirstPLayer",false);
+        intent.putExtra("isPlayingMp3",singleInfo);
         startActivity(intent);
     }
+
     class SeekBarEdition{
 
         public SeekBarEdition(){
             mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+
             mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
                 @Override
                 public void onPrepared(MediaPlayer mp) {
@@ -239,11 +205,11 @@ public class PlayerActivity extends AppCompatActivity {
                     if (fromUser){
                         mediaPlayer.seekTo(progress);
                     }
+                    fromMill2Sec(progress);
                 }
 
                 @Override
                 public void onStartTrackingTouch(SeekBar seekBar) {
-
                 }
 
                 @Override
@@ -251,6 +217,20 @@ public class PlayerActivity extends AppCompatActivity {
 
                 }
             });
+        }
+
+        public void fromMill2Sec(int progress) {
+            int minites = (progress/1000)/60;
+            int seconds = (progress/1000);
+            System.out.println("second "+seconds);
+            if (seconds>=60){
+                seconds = seconds - (minites*60);
+            }
+            if (seconds<10){
+                processTime.setText(minites+":0"+seconds);
+            }else {
+                processTime.setText(minites+":"+seconds);
+            }
         }
 
         public void playCycle(){
@@ -286,8 +266,6 @@ public class PlayerActivity extends AppCompatActivity {
         public void updateLyricView(ArrayList<Queue> lyricQueues){
             Queue timeQueue = lyricQueues.get(0);
             Queue lyricQueue = lyricQueues.get(1);
-
-            int i = 0;
             /**
              * This is because the element in the queue won't
              * be removed unless the next element is selected.
@@ -295,14 +273,16 @@ public class PlayerActivity extends AppCompatActivity {
              */
 //            while (timeQueue != null && lyricQueue!= null){
             while (timeQueue.size()>= 1 && lyricQueue.size()>= 1){
+
                 offset = System.currentTimeMillis() - begin - diff;
                 ispause = false;
-                if (currentTimeMill == 0&& isplaying==true){
+                if (currentTimeMill == 0 && isplaying==true){
                     nextTimeMill = (long) timeQueue.poll();
                     lyricPoll = (String) lyricQueue.poll();
                     Message lyricMessage = lyricHandler.obtainMessage();
                     lyricMessage.obj = lyricPoll;
                     lyricHandler.sendMessage(lyricMessage);
+                    currentTimeMill = currentTimeMill+10;
                 }
                 if (offset >= nextTimeMill&& isplaying==true){
                     Message lyricMessage = lyricHandler.obtainMessage();
@@ -311,7 +291,11 @@ public class PlayerActivity extends AppCompatActivity {
                     nextTimeMill = (long) timeQueue.poll();
                     lyricPoll = (String) lyricQueue.poll();
                 }
-                currentTimeMill = currentTimeMill+10;
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
         }
 

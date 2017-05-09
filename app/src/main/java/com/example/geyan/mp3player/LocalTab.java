@@ -56,11 +56,18 @@ public class LocalTab extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 if (mp3FilesList !=null){
+                    Intent intent = getActivity().getIntent();
+//                    Intent intent1 = getActivity().getIntent();
+                    boolean isFirst = intent.getBooleanExtra("isFirstPLayer",true);
+                    Mp3Info isplaying_mp3Info = (Mp3Info) intent.getSerializableExtra("isPlayingMp3");
                     Mp3Info mp3Info = mp3FilesList.get(position);
-                    Intent intent = new Intent();
 
-                    intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-
+//                    if (!isFirst&&(!isplaying_mp3Info.getMp3Name().equals(mp3Info.getMp3Name()))){
+//                        PlayerActivity.getInstance().finish();
+//                        System.out.println("+++++++"+isFirst);
+//                        System.out.println("++"+isplaying_mp3Info.getMp3Name());
+//                        System.out.println("++"+mp3Info.getMp3Name());
+//                    }
                     //传递一个对象，因为实现了sizalizable
                     intent.putExtra("mp3Info",mp3Info);
                     intent.setClass(getActivity(),PlayerActivity.class);

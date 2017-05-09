@@ -2,6 +2,7 @@ package com.example.geyan.util;
 
 import android.os.Environment;
 
+import com.example.geyan.model.LyricInfo;
 import com.example.geyan.model.Mp3Info;
 
 import java.io.File;
@@ -24,7 +25,6 @@ public class FileUtil {
     //得到SD 卡的路径
     public FileUtil(){
         SDCARD = Environment.getExternalStorageDirectory()+"/";
-        System.out.println("***"+SDCARD);
     }
 
     //create file
@@ -38,9 +38,7 @@ public class FileUtil {
     //create path(folder)
     public File createSDDir(String dirName){
         File dir = new File(SDCARD + dirName);
-        System.out.println("&&&"+SDCARD + dirName);
         dir.mkdir();
-        System.out.println("++"+dir.mkdir());
         return dir;
     }
     //判断文件夹是否存在
@@ -55,7 +53,6 @@ public class FileUtil {
         File file = null;
         OutputStream outputStream = null;
         this.path = path;
-        System.out.println("2D"+path);
         //首先创建路径和文件
         try {
             createSDDir(path);
@@ -76,16 +73,19 @@ public class FileUtil {
     //得到SDcard里面mp3的信息
     public List<Mp3Info> getDownloadedMp3Files(String path){
         List<Mp3Info> mp3InfoList = new ArrayList<>();
-        System.out.println("***=="+SDCARD + path);
-        System.out.println("&&&(("+path);
+        List<LyricInfo> lyricInfos = new ArrayList<>();
         File file = new File(SDCARD + path);
         File[] files = file.listFiles();
         for (File mp3File:files){
             if (mp3File.getName().endsWith("mp3")){
                 Mp3Info mp3Info = new Mp3Info();
                 mp3Info.setMp3Name(mp3File.getName());
-                mp3Info.setMp3Size(mp3File.length()+"");
+                mp3Info.setMp3Size(mp3File.length()/10000+"M");
                 mp3InfoList.add(mp3Info);
+            }
+            //TODO:
+            if (mp3File.getName().endsWith("lrc")){
+
             }
         }
         return mp3InfoList;
