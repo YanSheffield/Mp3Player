@@ -26,7 +26,6 @@ public class Mp3Downloader {
         FileUtil fileUtil = new FileUtil();
         //增加程序的健壮性
         if (fileUtil.isFileExist(path+"/"+fileName)){
-            System.out.println("已经存在");
             downloadStatus = 1;
             return downloadStatus;
         }else {
@@ -38,7 +37,6 @@ public class Mp3Downloader {
                 File resultFile = fileUtil.write2SDFromInput(path,fileName,inputStream);
 
                 if (resultFile==null){
-                    System.out.println("下载文件是空的");
                     downloadStatus = -1;
                     return downloadStatus;
                 }

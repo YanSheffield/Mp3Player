@@ -35,7 +35,7 @@
             android:layout_centerHorizontal="true"
             android:layout_marginBottom="16dp"
             android:visibility="visible"
-            android:layout_marginLeft="100pt"
+            android:layout_marginLeft="80pt"
             android:textColor="@color/colorAccent"/>
     </android.support.v7.widget.Toolbar>
 

@@ -31,6 +31,7 @@ public class Signup extends Activity {
 
     private UserInfo usersinfo = null;
     private DatabaseHelper helper = new DatabaseHelper(Signup.this);
+    private Button cancelbtn;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,7 +41,7 @@ public class Signup extends Activity {
         password = (EditText) findViewById(R.id.password_edit);
         confirm_password = (EditText) findViewById(R.id.confirm_password_edit);
         sign_up_btn = (Button) findViewById(R.id.sign_up_btn_confirm);
-
+        cancelbtn = (Button) findViewById(R.id.cancel);
         usersinfo = new UserInfo();
         sign_up_btn.setOnClickListener(new View.OnClickListener() {
             int id = 1;
@@ -72,10 +73,16 @@ public class Signup extends Activity {
                     intent.putExtra("islogin",true);
                     startActivity(intent);
                 }
-
-
             }
         });
 
+        cancelbtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent();
+                intent.setClass(Signup.this, MainActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 }

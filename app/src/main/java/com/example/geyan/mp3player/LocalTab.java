@@ -1,6 +1,8 @@
 package com.example.geyan.mp3player;
 
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -15,6 +17,8 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 
+import com.example.geyan.access.DatabaseHelper;
+import com.example.geyan.access.DatabaseSongs;
 import com.example.geyan.model.LyricInfo;
 import com.example.geyan.model.Mp3Info;
 import com.example.geyan.util.FileUtil;
@@ -32,15 +36,17 @@ public class LocalTab extends Fragment {
     private ArrayList<HashMap<String,String>> totalList = new ArrayList<>();
     private HashMap<String,String> inidividualList;
     private List<Mp3Info> mp3FilesList;
+    private List<Mp3Info> mp3InfoListDatabase = new ArrayList<>();
     private List<LyricInfo> lyricInfoList;
-    private ArrayList finalResult;
+    private ArrayList<HashMap<String,String>> finalResult;
     private int temp = 0;
     private boolean isDeleted = false;
     private View view;
     private ListView listView;
     MenuItem memu;
     private LyricInfo singleLyricOne;
-
+    private String username;
+    private boolean isFirstTime = true;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view =  inflater.inflate(R.layout.local, container, false);
@@ -51,6 +57,8 @@ public class LocalTab extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
+        final Intent intent = getActivity().getIntent();
+        username = intent.getStringExtra("user_name");
         listView = (ListView) view.findViewById(R.id.listViewlocal);
         finalResult = localMp3List();
         SimpleAdapter simpleAdapter = new SimpleAdapter(getActivity(),finalResult,R.layout.mp3info,new String[]{"song_name","song_size"},
@@ -60,11 +68,14 @@ public class LocalTab extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 if (mp3FilesList !=null){
-                    Intent intent = getActivity().getIntent();
+
 //                    Intent intent1 = getActivity().getIntent();
                     boolean isFirst = intent.getBooleanExtra("isFirstPLayer",true);
                     Mp3Info isplaying_mp3Info = (Mp3Info) intent.getSerializableExtra("isPlayingMp3");
-                    Mp3Info mp3Info = mp3FilesList.get(position);
+                    System.out.println("position "+position);
+                    Mp3Info mp3Info = mp3InfoListDatabase.get(position);
+                    System.out.println("INner "+mp3InfoListDatabase);
+                    System.out.println("mp3Infi "+mp3Info.getMp3Name());
                     for (LyricInfo singleLyric:lyricInfoList){
                         if (mp3Info.getMp3Name().substring(0, mp3Info.getMp3Name().length()-4).
                                 equals(singleLyric.getLycName().substring(0,singleLyric.getLycName().length()-4))){
@@ -74,6 +85,7 @@ public class LocalTab extends Fragment {
                     //传递一个对象，因为实现了sizalizable
                     intent.putExtra("mp3Info",mp3Info);
                     intent.putExtra("lyric",singleLyricOne);
+                    intent.putExtra("user_name",username);
                     intent.setClass(getActivity(),PlayerActivity.class);
                     startActivity(intent);
                 }
@@ -93,24 +105,38 @@ public class LocalTab extends Fragment {
 
         Intent intent = getActivity().getIntent();
         isDeleted = intent.getBooleanExtra("isDeleted",false);
-//        if (isDeleted) {
-            for (Mp3Info mp3Info : mp3FilesList) {
-                inidividualList = new HashMap<>();
-                inidividualList.put("song_name", mp3Info.getMp3Name());
-                inidividualList.put("song_size", mp3Info.getMp3Size());
-                totalList.add(inidividualList);
-                //do not add the same song name to remote list,but
-                //do not check the last element because it is itself
-                if (temp != 0) {
-                    for (int i = 0; i < totalList.size()-1; i++) {
-                        if (inidividualList.equals(totalList.get(i))) {
-                            totalList.remove(i);
+
+        DatabaseSongs databaseSongs = new DatabaseSongs(getActivity());
+        SQLiteDatabase db = databaseSongs.getReadableDatabase();
+        Cursor cursor = db.query("songs",new String[]{"owner,song"},null,null,null,null,null);
+        while (cursor.moveToNext()){
+            String owner = cursor.getString(cursor.getColumnIndex("owner"));
+            String songName = cursor.getString(cursor.getColumnIndex("song"));
+            if (owner!=null){
+            if (owner.equals(username)){
+                for (Mp3Info mp3Info:mp3FilesList){
+                    if (mp3Info.getMp3Name().equals(songName)){
+                        mp3InfoListDatabase.add(mp3Info);
+                        inidividualList = new HashMap<>();
+                        inidividualList.put("song_name", mp3Info.getMp3Name());
+                        inidividualList.put("song_size", mp3Info.getMp3Size());
+                        totalList.add(inidividualList);
+                        if (temp != 0) {
+                            for (int i = 0; i < totalList.size()-1; i++) {
+                                if (inidividualList.equals(totalList.get(i))) {
+                                    totalList.remove(i);
+                                }
+                                if (mp3Info.getMp3Name().equals(mp3InfoListDatabase.get(i).getMp3Name())){
+                                    mp3InfoListDatabase.remove(i);
+                                }
+                            }
                         }
+                        temp = temp + 1;
                     }
                 }
-                temp = temp + 1;
             }
-//        }
+        }
+        }
         return totalList;
     }
 

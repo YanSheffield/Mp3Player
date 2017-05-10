@@ -14,9 +14,12 @@ import android.support.annotation.IntDef;
 import android.support.annotation.RequiresApi;
 import android.widget.Toast;
 
+import com.example.geyan.access.DatabaseHelper;
+import com.example.geyan.access.DatabaseSongs;
 import com.example.geyan.download.HttpDownloader;
 import com.example.geyan.download.Mp3Downloader;
 import com.example.geyan.model.Mp3Info;
+import com.example.geyan.model.UserSong;
 import com.example.geyan.mp3player.MainActivity;
 import com.example.geyan.mp3player.R;
 import com.example.geyan.util.FileUtil;
@@ -30,6 +33,10 @@ import java.io.File;
 
 public class DownloadService extends Service {
 
+    private String userName;
+    private UserSong userSong;
+    private DatabaseSongs databaseSongs = new DatabaseSongs(DownloadService.this);
+
     @Override
     public IBinder onBind(Intent intent) {
         return null;
@@ -39,6 +46,8 @@ public class DownloadService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         //根据存入的id取出mp3对象
         Mp3Info singleMp3info = (Mp3Info) intent.getSerializableExtra("mp3Info");
+        userName = intent.getStringExtra("user_name");
+        userSong = new UserSong();
         DownloadThread downloadThread = new DownloadThread(singleMp3info);
         Thread thread = new Thread(downloadThread);
         thread.start();
@@ -66,6 +75,9 @@ public class DownloadService extends Service {
                 }
             }
             createNotification();
+            userSong.setOwner(userName);
+            userSong.setSongName(singlemp3Info.getMp3Name());
+            databaseSongs.insert(userSong);
 //            if (downloadStatus == -1){
 //                Toast.makeText(getApplicationContext(),R.string.downloadStatus_failure,Toast.LENGTH_SHORT).show();
 //            }else if (downloadStatus == 1){

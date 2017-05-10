@@ -75,6 +75,7 @@ public class PlayerActivity extends AppCompatActivity {
     private TextView songName;
     private boolean isStopThread = false;
     private TextView processTime;
+    private String username;
 
     static PlayerActivity activityPlayer;
     @Override
@@ -92,6 +93,7 @@ public class PlayerActivity extends AppCompatActivity {
         processTime = (TextView) findViewById(R.id.processTime);
         songName = (TextView) findViewById(R.id.songName);
         songName.setText(singleInfo.getMp3Name());
+        username = intent.getStringExtra("user_name");
         activityPlayer = this;
 
         pauseButton.setOnClickListener(new View.OnClickListener() {
@@ -136,13 +138,15 @@ public class PlayerActivity extends AppCompatActivity {
             Intent intent = new Intent();
             intent.putExtra("isDeleted",true);
             intent.putExtra("islogin",true);
-            intent.putExtra("user_name",singleInfo.getMp3Name());
+            intent.putExtra("user_name",username);
 
             Toast.makeText(this,"finish delete",Toast.LENGTH_SHORT).show();
             intent.setClass(this,MainActivity.class);
             startActivity(intent);
-            mediaPlayer.stop();
-           mediaPlayer.release();
+            if (mediaPlayer!=null){
+                mediaPlayer.stop();
+                mediaPlayer.release();
+            }
         }
         return super.onOptionsItemSelected(item);
     }

@@ -6,6 +6,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import com.example.geyan.model.UserInfo;
+import com.example.geyan.model.UserSong;
 
 /**
  * Created by geyan on 06/05/2017.

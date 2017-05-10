@@ -89,7 +89,6 @@ public class FileUtil {
     }
 
     //search lrc file in SD card
-    //TODO: it can be more efficient eg.lyric files should be put in a new folder
     public List<LyricInfo> getDownloadLrc(String path){
         List<LyricInfo> lrcList = new ArrayList<>();
         File file = new File(SDCARD + path);

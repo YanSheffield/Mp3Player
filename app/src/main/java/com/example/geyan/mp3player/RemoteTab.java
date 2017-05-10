@@ -56,6 +56,7 @@ public class RemoteTab extends Fragment {
     private ListView listView = null;
     private View view;
     private List<Mp3Info> mp3FilesList;
+    private String userName;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view =  inflater.inflate(R.layout.remote, container, false);
@@ -98,7 +99,7 @@ public class RemoteTab extends Fragment {
 //
         @Override
         public void handleMessage(Message msg){
-            Intent intent = getActivity().getIntent();
+            final Intent intent = getActivity().getIntent();
             final boolean isLogin = intent.getBooleanExtra("islogin",false);
             this.StrXMl = (String) msg.obj;
             analyzeXML();
@@ -111,9 +112,11 @@ public class RemoteTab extends Fragment {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                     if (isLogin==true){
+                        userName = intent.getStringExtra("user_name");
                         FileUtil fileUtil = new FileUtil();
                         boolean isSame = false;
                         mp3FilesList = fileUtil.getDownloadedMp3Files("mp3Folder/");
+                        //TODO: different users can download the same song
                         for (Mp3Info mp3Info:mp3FilesList){
                             if (mp3Info.getMp3Name().equals(infos.get(position).getMp3Name())){
                                 Toast.makeText(getActivity(),"You have downloaded the same song",Toast.LENGTH_LONG).show();
@@ -139,6 +142,7 @@ public class RemoteTab extends Fragment {
             Intent intent = new Intent(getActivity(),DownloadService.class);
             //将mp3info对象存入到intent中
             intent.putExtra("mp3Info", singleMp3info);
+            intent.putExtra("user_name",userName);
             intent.setClass(getActivity(), DownloadService.class);
             //启动service
             if (Build.VERSION.SDK_INT >= 23) {
