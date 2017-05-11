@@ -103,7 +103,6 @@ public class DownloadService extends Service {
                     .setDefaults(Notification.DEFAULT_VIBRATE)
                     .setContentIntent(pendingIntent)
                     .build();
-
             NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
             notificationManager.notify(234,notification);
         }
